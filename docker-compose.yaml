@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  nginx-secured:
+    container_name: nginx-secured
+    image: barpaw/nginx-secured:1.22.0
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./logs/nginx/:/var/log/nginx/
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./logs/modsec/:/var/log/modsec/
+      - ./modsec/modsecurity.conf:/etc/nginx/modsecurity.d/modsecurity.conf
+      - ./modsec/modsecurity_include.conf:/etc/nginx/modsecurity.d/modsecurity_include.conf
+      - ./modsec/unicode.mapping/:/etc/nginx/modsecurity.d/unicode.mapping/
+      - ./modsec/crs-setup.conf:/etc/nginx/modsecurity.d/coreruleset-3.3.2/crs-setup.conf
+      - ./modsec/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:/etc/nginx/modsecurity.d/coreruleset-3.3.2/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+      - ./modsec/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf:/etc/nginx/modsecurity.d/coreruleset-3.3.2/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
+      - ./static/:/static/
+    network_mode: host
+  certbot:
+    image: certbot/certbot:v1.29.0
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
